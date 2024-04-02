@@ -13,6 +13,11 @@ void ATile::SetTileInfo(FTileInfo InTileInfo)
 	this->TileInfo = InTileInfo;
 }
 
+void ATile::SetTileMammalInfo(AMammal* Mammal)
+{
+	TileInfo.CurrentMammal = Mammal;
+}
+
 void ATile::BeginPlay()
 {
 	Super::BeginPlay();

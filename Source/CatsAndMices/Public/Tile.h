@@ -4,6 +4,8 @@
 #include "GameFramework/Actor.h"
 #include "Tile.generated.h"
 
+class AMammal;
+
 USTRUCT(BlueprintType)
 struct FTileInfo
 {
@@ -15,9 +17,16 @@ struct FTileInfo
 	int Y{};
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	int Z{};
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	AMammal* CurrentMammal;
+	
 	FTileInfo() = default;
-	FTileInfo(const int OtherX, const int OtherY, const int OtherZ) : X(OtherX), Y(OtherY), Z(OtherZ) 
+	FTileInfo(const int OtherX, const int OtherY, const int OtherZ) : X(OtherX), Y(OtherY), Z(OtherZ),
+	                                                                  CurrentMammal(nullptr)
+	{
+	}
+
+	FTileInfo(const int OtherX, const int OtherY, const int OtherZ, AMammal* OtherMammal) : X(OtherX), Y(OtherY), Z(OtherZ), CurrentMammal(OtherMammal) 
 	{
 		
 	}
@@ -33,6 +42,7 @@ class CATSANDMICES_API ATile : public AActor
 public:	
 	ATile();
 	void SetTileInfo(FTileInfo InTileInfo);
+	void SetTileMammalInfo(AMammal* Mammal);
 
 protected:
 	virtual void BeginPlay() override;
