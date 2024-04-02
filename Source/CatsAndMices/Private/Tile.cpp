@@ -13,6 +13,11 @@ void ATile::SetTileInfo(FTileInfo InTileInfo)
 	this->TileInfo = InTileInfo;
 }
 
+FTileInfo ATile::GetTileInfo() const
+{
+	return  TileInfo;
+}
+
 void ATile::SetTileMammalInfo(AMammal* Mammal)
 {
 	TileInfo.CurrentMammal = Mammal;

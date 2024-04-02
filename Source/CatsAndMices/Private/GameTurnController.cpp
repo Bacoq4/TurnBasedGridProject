@@ -1,34 +1,75 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "GameTurnController.h"
 
-// Sets default values for this component's properties
-UGameTurnController::UGameTurnController()
-{
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+#include "BoardCreator.h"
+#include "Mice.h"
+#include "Tile.h"
 
-	// ...
+UGameTurnController::UGameTurnController(): BoardCreator(nullptr)
+{
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
 
-// Called when the game starts
 void UGameTurnController::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
-	
 }
 
 
-// Called every frame
 void UGameTurnController::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+}
 
-	// ...
+void UGameTurnController::SetBoardCreator(UBoardCreator* OtherBoardCreator)
+{
+	BoardCreator = OtherBoardCreator;
+}
+
+void UGameTurnController::StartMammalsGameplay()
+{
+	CurrentMices = BoardCreator->GetCurrentMices();
+	MiceIndex = 0;
+	ExecuteMiceMovement();
+}
+
+void UGameTurnController::ExecuteMiceMovement()
+{
+	if (CurrentMices.Num() <= MiceIndex)
+	{
+		return;
+	}
+	AMice* Mice = CurrentMices[MiceIndex];
+	if (!Mice)
+	{
+		return;
+	}
+	TArray<ATile*> EmptyTiles;
+	BoardCreator->GetAdjacentEmptyTiles(EmptyTiles, Mice->GetBelongedTile());
+	if (EmptyTiles.Num() > 0)
+	{
+		if (ATile* RandomEmptyTile = EmptyTiles[FMath::RandRange(0, EmptyTiles.Num() - 1)])
+		{
+			Mice->GetBelongedTile()->SetTileMammalInfo(nullptr);
+			Mice->SetBelongedTile(RandomEmptyTile);
+			RandomEmptyTile->SetTileMammalInfo(Mice);
+			Mice->MoveTo(RandomEmptyTile->GetActorLocation());
+			Mice->GetOnMoveFinished().Clear();
+			Mice->GetOnMoveFinished().AddDynamic(this, &UGameTurnController::ReExecuteMiceMovement);
+
+			MiceIndex++;
+		}
+	}
+	else
+	{
+		MiceIndex++;
+		ReExecuteMiceMovement();
+	}
+	
+}
+
+void UGameTurnController::ReExecuteMiceMovement()
+{
+	ExecuteMiceMovement();
 }
 

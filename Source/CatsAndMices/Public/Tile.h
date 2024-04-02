@@ -42,6 +42,7 @@ class CATSANDMICES_API ATile : public AActor
 public:	
 	ATile();
 	void SetTileInfo(FTileInfo InTileInfo);
+	FTileInfo GetTileInfo() const;
 	void SetTileMammalInfo(AMammal* Mammal);
 
 protected:
