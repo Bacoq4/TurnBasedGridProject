@@ -46,6 +46,10 @@ public:
 	void StarveCats();
 	void BreedAllMammals();
 
+	UFUNCTION(BlueprintPure)
+	int32 GetGameRound() const;
+	void SetGameRound(int16 OtherGameRound);
+
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Component", meta=(AllowPrivateAccess = true))
 	UBoardCreator* BoardCreator;
@@ -55,4 +59,7 @@ private:
 	TArray<AMice*> CurrentMices;
 	TArray<ACat*> CurrentCats;
 	bool bAnyMammalBreeding = false;
+
+	UPROPERTY(VisibleAnywhere)
+	int32 GameRound;
 };

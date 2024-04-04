@@ -29,6 +29,7 @@ void UGameTurnController::SetBoardCreator(UBoardCreator* OtherBoardCreator)
 
 void UGameTurnController::StartMammalsGameplay()
 {
+	GameRound++;
 	MiceIndex = 0;
 	CatIndex = 0;
 	ExecuteCatMovement();
@@ -221,5 +222,15 @@ void UGameTurnController::BreedAllMammals()
 		}
 	}
 	BoardCreator->GetCurrentCats().Append(LastlySpawnedCats);
+}
+
+int32 UGameTurnController::GetGameRound() const
+{
+	return GameRound;
+}
+
+void UGameTurnController::SetGameRound(int16 OtherGameRound)
+{
+	GameRound = OtherGameRound;
 }
 
