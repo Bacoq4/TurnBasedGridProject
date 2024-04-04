@@ -2,6 +2,11 @@
 
 #include "Mammal.h"
 
+#include "Tile.h"
+#include "Kismet/GameplayStatics.h"
+
+FMammalEvents::FOnMammalDiedSignature FMammalEvents::OnAnyMammalDied;
+
 AMammal::AMammal()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -23,6 +28,10 @@ void AMammal::BeginPlay()
 	Super::BeginPlay();
 }
 
+void AMammal::AfterMoveFinished()
+{
+}
+
 void AMammal::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -37,6 +46,7 @@ void AMammal::Tick(float DeltaTime)
 	else
 	{
 		SetActorLocation(TargetLocation);
+		AfterMoveFinished();
 		OnMoveFinished.Broadcast();
 		bMove = false;	
 	}
@@ -55,5 +65,62 @@ void AMammal::SetBelongedTile(ATile* OtherTile)
 FOnMoveFinished& AMammal::GetOnMoveFinished()
 {
 	return OnMoveFinished;
+}
+
+int8 AMammal::GetCurrentBreedingCount() const
+{
+	return CurrentBreedingCount;
+}
+
+void AMammal::IncreaseCurrentBreedingCount()
+{
+	CurrentBreedingCount++;
+}
+
+void AMammal::ResetCurrentBreedingCount()
+{
+	CurrentBreedingCount = 0;
+}
+
+int8 AMammal::GetMaxBreedingCount() const
+{
+	return MaxBreedingCount;
+}
+
+AMammal* AMammal::Breed(const ATile* Tile) const
+{
+	FVector SpawnLocation;
+	if (Tile)
+	{
+		SpawnLocation = FVector(GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z);
+	}
+				
+	FTransform SpawnTransform;
+	SpawnTransform.SetLocation(SpawnLocation);
+					
+	AActor* MammalToSpawn = UGameplayStatics::BeginDeferredActorSpawnFromClass(
+		this,
+		GetClass(),
+		SpawnTransform
+	);
+
+	if (MammalToSpawn)
+	{
+		MammalToSpawn->FinishSpawning(SpawnTransform);
+		MammalToSpawn->AttachToActor(GetOwner(), FAttachmentTransformRules::KeepWorldTransform);
+	}
+				
+	AMammal* Mammal = Cast<AMammal>(MammalToSpawn);
+	/*
+	* if (Mammal)
+	{
+		Mammal->SetBelongedTile(RandomTile);
+		CurrentMices.Add(Cast<AMice>(Mammal));
+	}
+	RandomTile->SetTileMammalInfo(Mammal);
+
+	 */
+
+	return Mammal;
 }
 

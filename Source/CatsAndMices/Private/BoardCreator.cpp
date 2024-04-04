@@ -14,6 +14,8 @@ UBoardCreator::UBoardCreator()
 void UBoardCreator::BeginPlay()
 {
 	Super::BeginPlay();
+
+	FMammalEvents::OnAnyMammalDied.AddUObject(this, &UBoardCreator::OnMammalDied);
 }
 
 void UBoardCreator::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -260,6 +262,50 @@ void UBoardCreator::GetAdjacentEmptyTiles(TArray<ATile*>& AdjacentTiles , const 
 	}
 }
 
+void UBoardCreator::GetAdjacentEmptyTilesForCat(TArray<ATile*>& AdjacentTiles, const ATile* Tile)
+{
+	if (!Tile)
+	{
+		return;
+	}
+	// Get Right Tile
+	if (Tile->GetTileInfo().X - 1 >= 0)
+	{
+		const int32 Index = TurnXYToIndex(Tile->GetTileInfo().X - 1, Tile->GetTileInfo().Y);
+		if (!IsValid(CurrentGroundTiles[Index]->GetTileInfo().CurrentMammal) || Cast<AMice>(CurrentGroundTiles[Index]->GetTileInfo().CurrentMammal))
+		{
+			AdjacentTiles.Add(CurrentGroundTiles[Index]); 
+		}
+	}
+	// Get Left Tile
+	if (Tile->GetTileInfo().X + 1 < GameSize.X)
+	{
+		const int32 Index = TurnXYToIndex(Tile->GetTileInfo().X + 1, Tile->GetTileInfo().Y);
+		if (!IsValid(CurrentGroundTiles[Index]->GetTileInfo().CurrentMammal) || Cast<AMice>(CurrentGroundTiles[Index]->GetTileInfo().CurrentMammal))
+		{
+			AdjacentTiles.Add(CurrentGroundTiles[Index]); 
+		}
+	}
+	// Get Up Tile
+	if (Tile->GetTileInfo().Y + 1 < GameSize.Y)
+	{
+		const int32 Index = TurnXYToIndex(Tile->GetTileInfo().X, Tile->GetTileInfo().Y + 1);
+		if (!IsValid(CurrentGroundTiles[Index]->GetTileInfo().CurrentMammal) || Cast<AMice>(CurrentGroundTiles[Index]->GetTileInfo().CurrentMammal))
+		{
+			AdjacentTiles.Add(CurrentGroundTiles[Index]); 
+		}
+	}
+	// Get Down Tile
+	if (Tile->GetTileInfo().Y - 1 >= 0)
+	{
+		const int32 Index = TurnXYToIndex(Tile->GetTileInfo().X, Tile->GetTileInfo().Y - 1);
+		if (!IsValid(CurrentGroundTiles[Index]->GetTileInfo().CurrentMammal) || Cast<AMice>(CurrentGroundTiles[Index]->GetTileInfo().CurrentMammal))
+		{
+			AdjacentTiles.Add(CurrentGroundTiles[Index]); 
+		}
+	}
+}
+
 int32 UBoardCreator::TurnXYToIndex(int32 X, int32 Y) const
 {
 	return X + Y * GameSize.X;
@@ -274,3 +320,16 @@ TArray<ACat*>& UBoardCreator::GetCurrentCats()
 {
 	return CurrentCats;
 }
+
+void UBoardCreator::OnMammalDied(AMammal* Mammal)
+{
+	if (AMice* Mice = Cast<AMice>(Mammal))
+	{
+		CurrentMices.Remove(Mice);
+	}
+	else if (ACat* Cat = Cast<ACat>(Mammal))
+	{
+		CurrentCats.Remove(Cat);
+	}
+}
+

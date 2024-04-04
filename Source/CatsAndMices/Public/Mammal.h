@@ -10,12 +10,17 @@ class ATile;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMoveFinished);
 
+
+struct FMammalEvents
+{
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnMammalDiedSignature , AMammal*);
+	static FOnMammalDiedSignature OnAnyMammalDied;
+};
+
 UCLASS()
 class CATSANDMICES_API AMammal : public AActor
 {
 	GENERATED_BODY()
-
-	
 public:	
 	AMammal();
 
@@ -30,16 +35,30 @@ protected:
 	UPROPERTY()
 	ATile* BelongedTile = nullptr;
 
-public:	
+	virtual void AfterMoveFinished();
+
+	/**
+	 *  From editor, it must be set to 3 for mice and 8 for cats
+	 */
+	UPROPERTY(EditDefaultsOnly, Category="Breeding")
+	int8 MaxBreedingCount;
+	UPROPERTY(VisibleAnywhere, Category="Breeding")
+	int8 CurrentBreedingCount;
+	
+public:
 	virtual void Tick(float DeltaTime) override;
 
 	ATile* GetBelongedTile() const;
 	void SetBelongedTile(ATile* OtherTile);
 
 	FOnMoveFinished& GetOnMoveFinished();
-	
-	FOnMoveFinished OnMoveFinished;
 
+	int8 GetCurrentBreedingCount() const;
+	void IncreaseCurrentBreedingCount();
+	void ResetCurrentBreedingCount();
+	int8 GetMaxBreedingCount() const;
+
+	AMammal* Breed(const ATile* Tile) const;
 private:
 
 	// Moving
@@ -49,4 +68,6 @@ private:
 	FVector StartLocation {};
 	FVector TargetLocation {};
 	bool bMove = false;
+	FOnMoveFinished OnMoveFinished;
+	
 };

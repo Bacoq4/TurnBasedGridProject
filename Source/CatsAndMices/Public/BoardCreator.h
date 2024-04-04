@@ -29,6 +29,7 @@ public:
 	ATile* GetRandomElementFromTileArray(TArray<ATile*>& Array) const;
 
 	void GetAdjacentEmptyTiles(TArray<ATile*>& AdjacentTiles, const ATile* Tile);
+	void GetAdjacentEmptyTilesForCat(TArray<ATile*>& AdjacentTiles, const ATile* Tile);
 
 	int32 TurnXYToIndex(int32 X, int32 Y) const;
 
@@ -36,6 +37,8 @@ public:
 	TArray<ACat*>& GetCurrentCats(); 
 
 protected:
+	UFUNCTION()
+	void OnMammalDied(AMammal* Mammal);
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

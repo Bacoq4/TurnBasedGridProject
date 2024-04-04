@@ -7,6 +7,8 @@
 #include "GameTurnController.generated.h"
 
 
+class ATile;
+class ACat;
 class AMice;
 class UBoardCreator;
 
@@ -25,11 +27,24 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	void SetBoardCreator(UBoardCreator* OtherBoardCreator);
 
+	/**
+	 * This function starts chain movement of mammals gameplay starting with mices
+	 */
 	UFUNCTION(BlueprintCallable)
 	void StartMammalsGameplay();
+
+	ATile* GetRandomEmptyTileForCat(TArray<ATile*>& EmptyTiles);
+	void ExecuteCatMovement();
+	UFUNCTION()
+	void ReExecuteCatMovement();
+
 	void ExecuteMiceMovement();
 	UFUNCTION()
 	void ReExecuteMiceMovement();
+
+	UFUNCTION()
+	void StarveCats();
+	void BreedAllMammals();
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Component", meta=(AllowPrivateAccess = true))
@@ -38,5 +53,6 @@ private:
 	int32 MiceIndex = 0;
 	int32 CatIndex = 0;
 	TArray<AMice*> CurrentMices;
-	TArray<AMice*> CurrentCats;
+	TArray<ACat*> CurrentCats;
+	bool bAnyMammalBreeding = false;
 };
