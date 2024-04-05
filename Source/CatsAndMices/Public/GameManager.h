@@ -7,6 +7,9 @@
 class UGameTurnController;
 class UBoardCreator;
 
+/**
+ * This class is responsible to communicate between cpp classes and blueprints
+ */
 UCLASS()
 class CATSANDMICES_API AGameManager : public AActor
 {

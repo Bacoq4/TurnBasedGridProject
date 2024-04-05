@@ -7,7 +7,9 @@
 #include "Cat.generated.h"
 
 
-
+/**
+ * Cat has health and can die as distinct from Mice.
+ */
 UCLASS()
 class CATSANDMICES_API ACat : public AMammal
 {

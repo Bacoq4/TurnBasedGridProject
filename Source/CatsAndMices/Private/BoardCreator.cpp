@@ -80,6 +80,8 @@ void UBoardCreator::CreateGameBoard(const FVector CenterLoc, const int X, const 
 				}
 				if (TileWallClass.LoadSynchronous())
 				{
+					// Spawning walls
+					
 					if (OuterIndex == 0)
 					{
 						const FVector WallSpawnLocation = FVector(static_cast<float>(InnerIndex) - static_cast<float>(X) / 2.f,
@@ -91,7 +93,6 @@ void UBoardCreator::CreateGameBoard(const FVector CenterLoc, const int X, const 
 							SetTileInfo(OuterIndex, InnerIndex, TileActor);
 							TileActor->SetActorRotation(FRotator(90,90,0));
 						}
-					
 					}
 					if (OuterIndex == Y-1)
 					{
@@ -304,6 +305,24 @@ void UBoardCreator::GetAdjacentEmptyTilesForCat(TArray<ATile*>& AdjacentTiles, c
 			AdjacentTiles.Add(CurrentGroundTiles[Index]); 
 		}
 	}
+}
+
+ATile* UBoardCreator::GetRandomEmptyTileForCat(TArray<ATile*>& EmptyTiles)
+{
+	// Tiles with mices are prioritized
+	TArray<ATile*> TileWithMices;
+	for (auto Tile : EmptyTiles)
+	{
+		if (Tile->GetTileInfo().CurrentMammal)
+		{
+			TileWithMices.Add(Tile);
+		}
+	}
+	if (TileWithMices.Num() > 0)
+	{
+		return TileWithMices[FMath::RandRange(0, TileWithMices.Num() - 1)];
+	}
+	return EmptyTiles[FMath::RandRange(0, EmptyTiles.Num() - 1)];
 }
 
 int32 UBoardCreator::TurnXYToIndex(int32 X, int32 Y) const

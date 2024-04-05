@@ -36,6 +36,7 @@ void AMammal::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// Lerped movement happens in here
 	if (!bMove) return;
 	
 	if (TimeElapsed < LerpDuration)
@@ -89,38 +90,31 @@ int8 AMammal::GetMaxBreedingCount() const
 
 AMammal* AMammal::Breed(const ATile* Tile) const
 {
+	// Get spawn transform
 	FVector SpawnLocation;
 	if (Tile)
 	{
 		SpawnLocation = FVector(GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z);
 	}
-				
 	FTransform SpawnTransform;
 	SpawnTransform.SetLocation(SpawnLocation);
-					
+
+	// Spawn mammal actor
 	AActor* MammalToSpawn = UGameplayStatics::BeginDeferredActorSpawnFromClass(
 		this,
 		GetClass(),
 		SpawnTransform
 	);
 
+	// Attach mammal
 	if (MammalToSpawn)
 	{
 		MammalToSpawn->FinishSpawning(SpawnTransform);
 		MammalToSpawn->AttachToActor(GetOwner(), FAttachmentTransformRules::KeepWorldTransform);
 	}
-				
+
+	// Return as mammal
 	AMammal* Mammal = Cast<AMammal>(MammalToSpawn);
-	/*
-	* if (Mammal)
-	{
-		Mammal->SetBelongedTile(RandomTile);
-		CurrentMices.Add(Cast<AMice>(Mammal));
-	}
-	RandomTile->SetTileMammalInfo(Mammal);
-
-	 */
-
 	return Mammal;
 }
 

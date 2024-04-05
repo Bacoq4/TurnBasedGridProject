@@ -7,7 +7,7 @@
 #include "Mice.generated.h"
 
 /**
- * 
+ * There is not much in Mice class this is just a placeholder for all Mices.
  */
 UCLASS()
 class CATSANDMICES_API AMice : public AMammal

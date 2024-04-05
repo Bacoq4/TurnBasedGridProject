@@ -17,6 +17,10 @@ struct FMammalEvents
 	static FOnMammalDiedSignature OnAnyMammalDied;
 };
 
+
+/**
+ * Base class for mice and cat
+ */
 UCLASS()
 class CATSANDMICES_API AMammal : public AActor
 {
@@ -24,6 +28,7 @@ class CATSANDMICES_API AMammal : public AActor
 public:	
 	AMammal();
 
+	/** If we want any mammal to move it is enough just to give this function a target location*/
 	void MoveTo(const FVector& OtherTargetLocation);
 
 protected:
@@ -32,16 +37,17 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Component", meta=(AllowPrivateAccess = true))
 	TObjectPtr<UStaticMeshComponent> StaticMeshComponent;
 
+	/** Every mammal has to have a tile, being filled when spawning and rewriting after moving */
 	UPROPERTY()
 	ATile* BelongedTile = nullptr;
 
+	/** If cat or mice wants to do something after moving */
 	virtual void AfterMoveFinished();
 
-	/**
-	 *  From editor, it must be set to 3 for mice and 8 for cats
-	 */
+	/** From editor, it must be set to 3 for mice and 8 for cats as our game rules  */
 	UPROPERTY(EditDefaultsOnly, Category="Breeding")
 	int8 MaxBreedingCount;
+	/** On 3 mammals will breed */
 	UPROPERTY(VisibleAnywhere, Category="Breeding")
 	int8 CurrentBreedingCount;
 	
@@ -61,7 +67,7 @@ public:
 	AMammal* Breed(const ATile* Tile) const;
 private:
 
-	// Moving
+	// All about moving
 	float TimeElapsed = 0;
 	UPROPERTY(EditDefaultsOnly, Category="Time")
 	float LerpDuration = 1.5f;

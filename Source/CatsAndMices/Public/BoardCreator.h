@@ -9,7 +9,9 @@ class ACat;
 class AMice;
 class AMammal;
 class ATile;
-
+/**
+ * This class is responsible to create board and all mammals
+ */
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CATSANDMICES_API UBoardCreator : public UActorComponent
 {
@@ -30,6 +32,7 @@ public:
 
 	void GetAdjacentEmptyTiles(TArray<ATile*>& AdjacentTiles, const ATile* Tile);
 	void GetAdjacentEmptyTilesForCat(TArray<ATile*>& AdjacentTiles, const ATile* Tile);
+	ATile* GetRandomEmptyTileForCat(TArray<ATile*>& EmptyTiles);
 
 	int32 TurnXYToIndex(int32 X, int32 Y) const;
 

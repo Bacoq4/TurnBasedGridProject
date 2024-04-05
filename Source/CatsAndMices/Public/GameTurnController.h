@@ -28,16 +28,20 @@ public:
 	void SetBoardCreator(UBoardCreator* OtherBoardCreator);
 
 	/**
-	 * This function starts chain movement of mammals gameplay starting with mices
+	 * This function starts chain movement of mammals gameplay starting with cats
 	 */
 	UFUNCTION(BlueprintCallable)
 	void StartMammalsGameplay();
 
-	ATile* GetRandomEmptyTileForCat(TArray<ATile*>& EmptyTiles);
+	// Instead of using recursive functions (it is not so good for performance also more bug prone)
+	// I might have used Unreal tasks. The reason I went this way. 1-> I didn't want to overcomplicate
+	// things for a simple game. 2-> I wanted to use as minimal blueprint as possible
+	/** These function is used recursively */
 	void ExecuteCatMovement();
 	UFUNCTION()
 	void ReExecuteCatMovement();
-
+	
+	/** These function is used recursively */
 	void ExecuteMiceMovement();
 	UFUNCTION()
 	void ReExecuteMiceMovement();
